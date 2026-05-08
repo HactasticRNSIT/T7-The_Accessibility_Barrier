@@ -1,0 +1,135 @@
+/* ============================================================
+   src/styles/layout.css
+   Layout-level styles: topbar, emergency bar, nav, main
+   ============================================================ */
+
+/* ---- Top bar ---- */
+.topbar {
+  background: var(--primary);
+  color: #fff;
+  padding: 10px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.topbar-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.topbar-logo .tagline {
+  font-size: 11px;
+  font-weight: 400;
+  opacity: 0.85;
+  display: block;
+}
+
+.topbar-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ---- Language select ---- */
+.lang-sel {
+  background: rgba(255, 255, 255, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #fff;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.lang-sel option { color: #000; }
+
+/* ---- Emergency bar ---- */
+.emergency-bar {
+  background: var(--danger);
+  color: #fff;
+  padding: 8px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.emergency-bar .ebar-title {
+  font-weight: 700;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ebar-btn {
+  background: #fff;
+  color: var(--danger);
+  border: none;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: transform 0.15s;
+}
+
+.ebar-btn:hover { transform: scale(1.05); }
+.ebar-btn.ambulance { background: #ff6b35; color: #fff; }
+.ebar-btn.caregiver { background: #ffcc00; color: #1a1a00; }
+.ebar-btn.location  { background: #4caf50; color: #fff; }
+
+/* ---- Nav tabs ---- */
+.nav-tabs {
+  background: var(--bg-card);
+  border-bottom: 2px solid var(--border);
+  display: flex;
+  overflow-x: auto;
+  padding: 0 12px;
+  gap: 0;
+}
+
+.nav-tab {
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  border: none;
+  background: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-muted);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.nav-tab:hover {
+  color: var(--primary);
+  background: var(--primary-light);
+}
+
+.nav-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: 700;
+}
+
+/* ---- Main content wrapper ---- */
+.main {
+  padding: 16px;
+  max-width: 900px;
+  margin: 0 auto;
+}

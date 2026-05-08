@@ -1,0 +1,110 @@
+/* ============================================================
+   Arogya Dwaar — Global Styles
+   src/styles/globals.css
+   ============================================================ */
+
+:root {
+  --primary: #1a6b3a;
+  --primary-light: #e8f5ee;
+  --primary-mid: #2e9e5c;
+  --accent: #f0a500;
+  --accent-light: #fff8e6;
+  --danger: #d63b3b;
+  --danger-light: #fdeaea;
+  --info: #1a5fb4;
+  --info-light: #e1ecfb;
+  --text: #1a1a2e;
+  --text-muted: #5a6272;
+  --bg: #f7faf8;
+  --bg-card: #ffffff;
+  --border: #d4e4db;
+  --radius: 14px;
+  --shadow: 0 2px 12px rgba(26, 107, 58, 0.08);
+}
+
+/* High-contrast override class (toggled on <body>) */
+.high-contrast {
+  --primary: #005500;
+  --text: #000;
+  --bg: #fff;
+  --bg-card: #fffde0;
+  --border: #000;
+  --text-muted: #333;
+  --primary-light: #e0ffe0;
+}
+
+/* Large text override (toggled via body font-size) */
+.large-text {
+  font-size: 19px !important;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  transition: font-size 0.2s;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* ---- Scrollbar styling ---- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+/* ---- Animations ---- */
+@keyframes pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(214, 59, 59, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 16px rgba(214, 59, 59, 0);
+  }
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
