@@ -1,0 +1,883 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css" rel="stylesheet">
+<style>
+  :root {
+    --primary: #1a6b3a;
+    --primary-light: #e8f5ee;
+    --primary-mid: #2e9e5c;
+    --accent: #f0a500;
+    --accent-light: #fff8e6;
+    --danger: #d63b3b;
+    --danger-light: #fdeaea;
+    --info: #1a5fb4;
+    --info-light: #e1ecfb;
+    --text: #1a1a2e;
+    --text-muted: #5a6272;
+    --bg: #f7faf8;
+    --bg-card: #ffffff;
+    --border: #d4e4db;
+    --radius: 14px;
+    --shadow: 0 2px 12px rgba(26,107,58,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+  body { background: var(--bg); color: var(--text); font-size: 16px; }
+
+  .high-contrast { --primary: #005500; --text: #000; --bg: #fff; --bg-card: #fffde0; --border: #000; --text-muted: #333; --primary-light: #e0ffe0; }
+
+  /* TOP BAR */
+  .topbar { background: var(--primary); color: #fff; padding: 10px 18px; display: flex; align-items: center; justify-content: space-between; }
+  .topbar-logo { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; letter-spacing: 0.5px; }
+  .topbar-logo .tagline { font-size: 11px; font-weight: 400; opacity: 0.85; display: block; }
+  .topbar-controls { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .ctrl-btn { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3); color: #fff; border-radius: 8px; padding: 6px 12px; font-size: 13px; cursor: pointer; display: flex; align-items: center; gap: 5px; transition: background 0.2s; }
+  .ctrl-btn:hover { background: rgba(255,255,255,0.3); }
+  .ctrl-btn.active { background: var(--accent); color: #1a1a00; border-color: var(--accent); }
+
+  /* LANG SELECT */
+  .lang-sel { background: rgba(255,255,255,0.18); border: 1px solid rgba(255,255,255,0.3); color: #fff; border-radius: 8px; padding: 6px 10px; font-size: 13px; cursor: pointer; }
+  .lang-sel option { color: #000; }
+
+  /* EMERGENCY BAR */
+  .emergency-bar { background: var(--danger); color: #fff; padding: 8px 18px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .emergency-bar .ebar-title { font-weight: 700; font-size: 14px; display: flex; align-items: center; gap: 6px; }
+  .ebar-btn { background: #fff; color: var(--danger); border: none; border-radius: 10px; padding: 8px 16px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: transform 0.15s; }
+  .ebar-btn:hover { transform: scale(1.05); }
+  .ebar-btn.ambulance { background: #ff6b35; color: #fff; }
+  .ebar-btn.caregiver { background: #ffcc00; color: #1a1a00; }
+  .ebar-btn.location { background: #4caf50; color: #fff; }
+
+  /* NAV TABS */
+  .nav-tabs { background: var(--bg-card); border-bottom: 2px solid var(--border); display: flex; overflow-x: auto; padding: 0 12px; gap: 0; }
+  .nav-tab { padding: 12px 16px; font-size: 14px; font-weight: 500; cursor: pointer; border-bottom: 3px solid transparent; color: var(--text-muted); white-space: nowrap; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
+  .nav-tab:hover { color: var(--primary); background: var(--primary-light); }
+  .nav-tab.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 700; }
+
+  /* MAIN CONTENT */
+  .main { padding: 16px; max-width: 900px; margin: 0 auto; }
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* CARDS */
+  .card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px; margin-bottom: 14px; box-shadow: var(--shadow); }
+  .card-title { font-size: 17px; font-weight: 700; color: var(--primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+
+  /* GRID */
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+  .grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
+
+  /* STAT CARDS */
+  .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); padding: 16px; text-align: center; }
+  .stat-num { font-size: 28px; font-weight: 800; color: var(--primary); }
+  .stat-label { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+  .stat-card.warn .stat-num { color: #d35400; }
+  .stat-card.danger .stat-num { color: var(--danger); }
+  .stat-card.info .stat-num { color: var(--info); }
+
+  /* VOICE ASSISTANT */
+  .voice-widget { background: linear-gradient(135deg, #e8f5ee 0%, #d0eeda 100%); border: 2px solid var(--primary-mid); border-radius: 20px; padding: 24px; text-align: center; }
+  .voice-icon { width: 80px; height: 80px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; cursor: pointer; transition: all 0.2s; font-size: 36px; color: #fff; }
+  .voice-icon:hover { transform: scale(1.08); box-shadow: 0 0 20px rgba(26,107,58,0.4); }
+  .voice-icon.listening { animation: pulse 1s infinite; background: var(--danger); }
+  @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(214,59,59,0.4); } 50% { box-shadow: 0 0 0 16px rgba(214,59,59,0); } }
+  .voice-title { font-size: 19px; font-weight: 700; color: var(--primary); margin-bottom: 6px; }
+  .voice-status { font-size: 14px; color: var(--text-muted); min-height: 20px; }
+  .voice-response { background: #fff; border-radius: 12px; padding: 14px; margin-top: 14px; font-size: 15px; line-height: 1.6; text-align: left; border: 1px solid var(--border); min-height: 60px; }
+  .voice-lang-row { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+  .vlang-btn { background: #fff; border: 2px solid var(--border); border-radius: 20px; padding: 6px 16px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+  .vlang-btn.active { border-color: var(--primary); color: var(--primary); font-weight: 700; }
+  .voice-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 14px; }
+  .vact-btn { background: var(--primary); color: #fff; border: none; border-radius: 10px; padding: 10px 18px; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 6px; font-weight: 600; }
+  .vact-btn.outline { background: #fff; color: var(--primary); border: 2px solid var(--primary); }
+  .vact-btn:hover { opacity: 0.88; }
+
+  /* HEATMAP (CSS-based) */
+  .heatmap-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin-top: 10px; }
+  .hm-cell { border-radius: 8px; padding: 10px 6px; text-align: center; font-size: 12px; font-weight: 600; cursor: pointer; transition: transform 0.15s; }
+  .hm-cell:hover { transform: scale(1.06); }
+  .hm-low { background: #c8e6c9; color: #1b5e20; }
+  .hm-mid { background: #fff9c4; color: #f57f17; }
+  .hm-high { background: #ffccbc; color: #bf360c; }
+  .hm-critical { background: #ef9a9a; color: #b71c1c; }
+  .hm-legend { display: flex; gap: 12px; font-size: 12px; flex-wrap: wrap; margin-top: 8px; }
+  .hm-leg { display: flex; align-items: center; gap: 5px; }
+  .hm-dot { width: 14px; height: 14px; border-radius: 4px; }
+
+  /* CHART BARS */
+  .bar-chart { margin-top: 10px; }
+  .bar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .bar-label { font-size: 13px; min-width: 130px; color: var(--text-muted); }
+  .bar-track { flex: 1; background: #eee; border-radius: 6px; height: 22px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 6px; display: flex; align-items: center; padding-left: 8px; font-size: 12px; font-weight: 700; color: #fff; transition: width 1s ease; }
+
+  /* RECOMMENDATIONS */
+  .rec-card { border-left: 4px solid var(--primary); background: var(--primary-light); border-radius: 10px; padding: 14px 16px; margin-bottom: 10px; }
+  .rec-badge { font-size: 11px; font-weight: 700; background: var(--primary); color: #fff; border-radius: 20px; padding: 2px 10px; display: inline-block; margin-bottom: 6px; }
+  .rec-text { font-size: 14px; line-height: 1.6; }
+  .rec-card.warn { border-left-color: #e67e22; background: #fff8f0; }
+  .rec-card.warn .rec-badge { background: #e67e22; }
+
+  /* RISK SCORE */
+  .risk-meter { position: relative; width: 160px; height: 80px; margin: 0 auto; }
+  .risk-label { text-align: center; font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+  .risk-num { font-size: 26px; font-weight: 800; text-align: center; }
+
+  /* CONTACT CARDS */
+  .contact-card { display: flex; align-items: center; gap: 14px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 8px; }
+  .contact-icon { width: 46px; height: 46px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0; }
+  .contact-info { flex: 1; }
+  .contact-name { font-weight: 700; font-size: 15px; }
+  .contact-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+  .contact-call { background: var(--primary); color: #fff; border: none; border-radius: 8px; padding: 8px 14px; font-size: 13px; cursor: pointer; font-weight: 600; white-space: nowrap; }
+
+  /* SCHEME CARDS */
+  .scheme-card { background: var(--info-light); border: 1px solid #b8d0f5; border-radius: 12px; padding: 14px; margin-bottom: 8px; }
+  .scheme-name { font-weight: 700; font-size: 15px; color: var(--info); }
+  .scheme-desc { font-size: 13px; color: var(--text-muted); margin-top: 4px; }
+  .scheme-link { font-size: 13px; color: var(--info); font-weight: 600; text-decoration: none; margin-top: 6px; display: inline-block; cursor: pointer; }
+
+  /* OFFLINE BANNER */
+  .offline-banner { background: #fff3cd; border: 1px solid #ffc107; border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; gap: 10px; font-size: 14px; margin-bottom: 14px; }
+
+  /* SCROLL */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+  /* QUICK LINKS */
+  .quick-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+  .quick-btn { background: var(--bg-card); border: 2px solid var(--border); border-radius: 14px; padding: 16px 10px; text-align: center; cursor: pointer; transition: all 0.2s; color: var(--text); }
+  .quick-btn:hover { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+  .quick-btn i { font-size: 28px; display: block; margin-bottom: 8px; color: var(--primary); }
+  .quick-btn span { font-size: 13px; font-weight: 600; }
+
+  /* ALERT TAG */
+  .alert-tag { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; border-radius: 20px; padding: 3px 10px; }
+  .at-high { background: #fdeaea; color: #c0392b; }
+  .at-med { background: #fff8e1; color: #e67e22; }
+  .at-low { background: #e8f5e9; color: #1b6b3a; }
+
+  /* FLOATING READ ALOUD */
+  .fab { position: fixed; bottom: 20px; right: 20px; width: 56px; height: 56px; background: var(--accent); border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 24px; color: #1a1a00; box-shadow: 0 4px 16px rgba(240,165,0,0.4); z-index: 9999; transition: transform 0.2s; }
+  .fab:hover { transform: scale(1.1); }
+
+  /* TOAST */
+  .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #1a1a2e; color: #fff; border-radius: 10px; padding: 12px 20px; font-size: 14px; z-index: 9999; display: none; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+  .toast.show { display: block; animation: fadeInDown 0.3s; }
+  @keyframes fadeInDown { from { opacity:0; transform: translateX(-50%) translateY(-10px); } to { opacity:1; transform: translateX(-50%) translateY(0); } }
+
+  /* SECTION DIVIDER */
+  .sec-head { font-size: 16px; font-weight: 700; color: var(--primary); margin: 18px 0 10px; display: flex; align-items: center; gap: 8px; }
+
+  /* PROG BAR */
+  .prog { background: #e0e0e0; border-radius: 6px; height: 10px; overflow: hidden; margin-top: 6px; }
+  .prog-fill { height: 100%; border-radius: 6px; }
+
+  .tag { display: inline-block; font-size: 11px; font-weight: 700; border-radius: 6px; padding: 2px 8px; margin-right: 4px; }
+</style>
+</head>
+<body>
+
+<div class="toast" id="toast"></div>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <i class="ti ti-heartbeat" style="font-size:28px"></i>
+    <div>
+      ಆರೋಗ್ಯ ದ್ವಾರ · Arogya Dwaar
+      <span class="tagline">Karnataka Healthcare Accessibility Portal</span>
+    </div>
+  </div>
+  <div class="topbar-controls">
+    <select class="lang-sel" id="langSel" onchange="changeLang(this.value)">
+      <option value="en">English</option>
+      <option value="kn">ಕನ್ನಡ</option>
+      <option value="hi">हिंदी</option>
+      <option value="ur">اردو</option>
+      <option value="ta">தமிழ்</option>
+    </select>
+    <button class="ctrl-btn" onclick="toggleContrast()" id="contrastBtn"><i class="ti ti-contrast"></i> High Contrast</button>
+    <button class="ctrl-btn" onclick="toggleTextSize()" id="textBtn"><i class="ti ti-text-size"></i> Large Text</button>
+    <button class="ctrl-btn" onclick="toggleOffline()" id="offlineBtn"><i class="ti ti-wifi-off"></i> Offline Mode</button>
+  </div>
+</div>
+
+<!-- EMERGENCY BAR -->
+<div class="emergency-bar">
+  <div class="ebar-title"><i class="ti ti-alert-triangle"></i> <span id="ebarTitle">EMERGENCY ASSISTANCE</span></div>
+  <button class="ebar-btn ambulance" onclick="callEmergency('ambulance')"><i class="ti ti-ambulance"></i> <span id="eCallAmb">Call Ambulance 108</span></button>
+  <button class="ebar-btn caregiver" onclick="callEmergency('caregiver')"><i class="ti ti-user-heart"></i> <span id="eCallCare">Caregiver Alert</span></button>
+  <button class="ebar-btn location" onclick="shareLocation()"><i class="ti ti-map-pin"></i> <span id="eShareLoc">Share Location</span></button>
+  <button class="ebar-btn" onclick="callEmergency('police')" style="background:#6c63ff;color:#fff"><i class="ti ti-shield"></i> 100</button>
+</div>
+
+<!-- NAV TABS -->
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="showPage('home')" id="tab-home"><i class="ti ti-home"></i> <span data-key="home">Home</span></div>
+  <div class="nav-tab" onclick="showPage('voice')" id="tab-voice"><i class="ti ti-microphone"></i> <span data-key="voice">Voice Assistant</span></div>
+  <div class="nav-tab" onclick="showPage('dashboard')" id="tab-dashboard"><i class="ti ti-chart-bar"></i> <span data-key="dashboard">Dashboard</span></div>
+  <div class="nav-tab" onclick="showPage('services')" id="tab-services"><i class="ti ti-building-hospital"></i> <span data-key="services">Services</span></div>
+  <div class="nav-tab" onclick="showPage('schemes')" id="tab-schemes"><i class="ti ti-file-certificate"></i> <span data-key="schemes">Schemes</span></div>
+  <div class="nav-tab" onclick="showPage('risk')" id="tab-risk"><i class="ti ti-shield-check"></i> <span data-key="risk">Risk Score</span></div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<!-- ===== HOME PAGE ===== -->
+<div class="page active" id="page-home">
+  <div id="offlineBanner" class="offline-banner" style="display:none">
+    <i class="ti ti-wifi-off" style="font-size:20px;color:#e67e22"></i>
+    <span id="offlineText">Offline Mode Active — Essential services available without internet</span>
+  </div>
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+      <div style="flex:1;min-width:200px">
+        <div style="font-size:22px;font-weight:800;color:var(--primary)" id="welcomeText">ನಮಸ್ಕಾರ! Welcome to Arogya Dwaar</div>
+        <div style="font-size:14px;color:var(--text-muted);margin-top:6px" id="welcomeSub">Your gateway to accessible healthcare in Karnataka. Who are you?</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="vact-btn" onclick="setGroup('elderly')"><i class="ti ti-user-check"></i> Elderly</button>
+        <button class="vact-btn outline" onclick="setGroup('disabled')"><i class="ti ti-wheelchair"></i> Disabled</button>
+        <button class="vact-btn outline" onclick="setGroup('rural')"><i class="ti ti-map"></i> Rural</button>
+        <button class="vact-btn outline" onclick="setGroup('caregiver')"><i class="ti ti-heart-handshake"></i> Caregiver</button>
+      </div>
+    </div>
+  </div>
+  <div class="grid3" style="margin-bottom:14px">
+    <div class="stat-card"><div class="stat-num" id="coveredStat">31</div><div class="stat-label">Districts Covered</div></div>
+    <div class="stat-card warn"><div class="stat-num">8</div><div class="stat-label">High-Risk Zones</div></div>
+    <div class="stat-card danger"><div class="stat-num">14%</div><div class="stat-label">Elderly Unserved</div></div>
+    <div class="stat-card info"><div class="stat-num">247</div><div class="stat-label">NGO Partners</div></div>
+  </div>
+  <div class="sec-head"><i class="ti ti-apps"></i> <span id="quickTitle">Quick Services</span></div>
+  <div class="quick-grid">
+    <div class="quick-btn" onclick="showPage('voice')"><i class="ti ti-microphone"></i><span id="qs1">Voice Help</span></div>
+    <div class="quick-btn" onclick="findNearest()"><i class="ti ti-building-hospital"></i><span id="qs2">Nearest Hospital</span></div>
+    <div class="quick-btn" onclick="showPage('services')"><i class="ti ti-nurse"></i><span id="qs3">Telemedicine</span></div>
+    <div class="quick-btn" onclick="showPage('schemes')"><i class="ti ti-file-certificate"></i><span id="qs4">Gov Schemes</span></div>
+    <div class="quick-btn" onclick="showPage('risk')"><i class="ti ti-shield-check"></i><span id="qs5">Risk Score</span></div>
+    <div class="quick-btn" onclick="showPage('dashboard')"><i class="ti ti-chart-dots"></i><span id="qs6">Health Map</span></div>
+    <div class="quick-btn" onclick="findNGO()"><i class="ti ti-heart-handshake"></i><span id="qs7">Find NGO</span></div>
+    <div class="quick-btn" onclick="readPageAloud()"><i class="ti ti-volume"></i><span id="qs8">Read Aloud</span></div>
+  </div>
+  <div class="sec-head"><i class="ti ti-users-group"></i> Vulnerable Group Services</div>
+  <div class="grid2">
+    <div class="card" style="margin-bottom:0;border-left:4px solid #1a6b3a">
+      <div class="card-title"><i class="ti ti-user-check"></i> Elderly Care</div>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.7">Geriatric screening, home visits, medicine delivery, pension-linked health cards, dementia support helpline.</div>
+      <button class="vact-btn" style="margin-top:12px;font-size:13px" onclick="showGroup('elderly')"><i class="ti ti-arrow-right"></i> Explore</button>
+    </div>
+    <div class="card" style="margin-bottom:0;border-left:4px solid #1a5fb4">
+      <div class="card-title"><i class="ti ti-wheelchair"></i> Disability Support</div>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.7">Assistive devices, rehabilitation centres, UDID card help, sign-language teleconsult, adaptive wellness programs.</div>
+      <button class="vact-btn" style="margin-top:12px;font-size:13px;background:var(--info)" onclick="showGroup('disabled')"><i class="ti ti-arrow-right"></i> Explore</button>
+    </div>
+    <div class="card" style="margin-bottom:0;border-left:4px solid #e67e22">
+      <div class="card-title"><i class="ti ti-map"></i> Rural & Tribal</div>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.7">Mobile health vans, ASHA workers, community health centres, offline-first services, local language support.</div>
+      <button class="vact-btn" style="margin-top:12px;font-size:13px;background:#e67e22" onclick="showGroup('rural')"><i class="ti ti-arrow-right"></i> Explore</button>
+    </div>
+    <div class="card" style="margin-bottom:0;border-left:4px solid #8e44ad">
+      <div class="card-title"><i class="ti ti-heart"></i> Women & Children</div>
+      <div style="font-size:13px;color:var(--text-muted);line-height:1.7">Maternal health, immunisation tracking, Anganwadi connect, domestic support services, nutrition programs.</div>
+      <button class="vact-btn" style="margin-top:12px;font-size:13px;background:#8e44ad" onclick="showGroup('women')"><i class="ti ti-arrow-right"></i> Explore</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== VOICE PAGE ===== -->
+<div class="page" id="page-voice">
+  <div class="voice-widget">
+    <div class="voice-title"><i class="ti ti-robot"></i> AI Health Assistant — Dr. Aarogya</div>
+    <div class="voice-status" id="voiceStatus">Tap the microphone to speak in your language</div>
+    <div class="voice-icon" id="voiceBtn" onclick="toggleVoice()">
+      <i class="ti ti-microphone" id="voiceIcon"></i>
+    </div>
+    <div class="voice-lang-row">
+      <button class="vlang-btn active" onclick="setVoiceLang('en','English')">English</button>
+      <button class="vlang-btn" onclick="setVoiceLang('kn','ಕನ್ನಡ')">ಕನ್ನಡ</button>
+      <button class="vlang-btn" onclick="setVoiceLang('hi','हिंदी')">हिंदी</button>
+      <button class="vlang-btn" onclick="setVoiceLang('ta','தமிழ்')">தமிழ்</button>
+      <button class="vlang-btn" onclick="setVoiceLang('te','తెలుగు')">తెలుగు</button>
+      <button class="vlang-btn" onclick="setVoiceLang('ur','اردو')">اردو</button>
+    </div>
+    <div class="voice-response" id="voiceResponse">
+      👋 Hello! I am Dr. Aarogya, your health assistant. I can help you find hospitals, understand your health scheme benefits, locate NGOs, or guide you on preventive care. Please tap the microphone and speak!
+    </div>
+    <div class="voice-actions">
+      <button class="vact-btn" onclick="readVoiceResponse()"><i class="ti ti-volume"></i> Read Aloud</button>
+      <button class="vact-btn outline" onclick="quickAsk('nearest hospital')"><i class="ti ti-building-hospital"></i> Nearest Hospital</button>
+      <button class="vact-btn outline" onclick="quickAsk('government schemes')"><i class="ti ti-file-certificate"></i> My Schemes</button>
+      <button class="vact-btn outline" onclick="quickAsk('risk score')"><i class="ti ti-shield-check"></i> Check Risk</button>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px">
+    <div class="card-title"><i class="ti ti-message-chatbot"></i> Ask Dr. Aarogya</div>
+    <div style="display:flex;gap:8px">
+      <input type="text" id="chatInput" placeholder="Type your health question..." style="flex:1;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;outline:none" onkeydown="if(event.key==='Enter')sendChat()">
+      <button class="vact-btn" onclick="sendChat()" style="padding:10px 16px"><i class="ti ti-send"></i></button>
+    </div>
+    <div id="chatHistory" style="margin-top:12px;max-height:260px;overflow-y:auto"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title"><i class="ti ti-list"></i> Common Questions</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px">
+      <button class="vlang-btn" onclick="quickAsk('what is ayushman bharat')">Ayushman Bharat?</button>
+      <button class="vlang-btn" onclick="quickAsk('diabetes prevention tips')">Diabetes Tips</button>
+      <button class="vlang-btn" onclick="quickAsk('nearest PHC Bengaluru')">Nearest PHC</button>
+      <button class="vlang-btn" onclick="quickAsk('assistive devices disability')">Assistive Devices</button>
+      <button class="vlang-btn" onclick="quickAsk('mobile health van schedule')">Mobile Van Schedule</button>
+      <button class="vlang-btn" onclick="quickAsk('caregiver support helpline')">Caregiver Helpline</button>
+      <button class="vlang-btn" onclick="quickAsk('mental health support')">Mental Health</button>
+      <button class="vlang-btn" onclick="quickAsk('immunization schedule child')">Child Immunization</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD PAGE ===== -->
+<div class="page" id="page-dashboard">
+  <div class="card">
+    <div class="card-title"><i class="ti ti-map-2"></i> Karnataka Healthcare Accessibility Heatmap</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:10px">Tap any district to see details. Color = accessibility gap severity.</div>
+    <div class="heatmap-grid" id="heatmapGrid"></div>
+    <div class="hm-legend">
+      <div class="hm-leg"><div class="hm-dot" style="background:#c8e6c9"></div> Low gap</div>
+      <div class="hm-leg"><div class="hm-dot" style="background:#fff9c4"></div> Moderate</div>
+      <div class="hm-leg"><div class="hm-dot" style="background:#ffccbc"></div> High gap</div>
+      <div class="hm-leg"><div class="hm-dot" style="background:#ef9a9a"></div> Critical</div>
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title"><i class="ti ti-chart-bar"></i> Barriers Breakdown</div>
+      <div class="bar-chart" id="barChart"></div>
+    </div>
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title"><i class="ti ti-chart-pie"></i> Participation by Group</div>
+      <div id="pieChart" style="margin-top:8px"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:14px">
+    <div class="card-title"><i class="ti ti-alert-triangle"></i> Elderly Risk Zones — Karnataka</div>
+    <div id="riskZones"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="ti ti-trending-up"></i> Monthly Healthcare Participation Trend</div>
+    <div id="trendChart" style="margin-top:8px"></div>
+  </div>
+</div>
+
+<!-- ===== SERVICES PAGE ===== -->
+<div class="page" id="page-services">
+  <div class="card">
+    <div class="card-title"><i class="ti ti-building-hospital"></i> Nearest Hospitals & PHCs — Karnataka</div>
+    <div id="hospitalList"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="ti ti-device-desktop-analytics"></i> Telemedicine Services</div>
+    <div class="grid2">
+      <div style="background:var(--primary-light);border-radius:12px;padding:14px">
+        <div style="font-weight:700;color:var(--primary)"><i class="ti ti-video"></i> eSanjeevani</div>
+        <div style="font-size:13px;color:var(--text-muted);margin:6px 0">Free teleconsultation by Govt of India. Available in Kannada, Hindi, English.</div>
+        <button class="vact-btn" style="font-size:13px" onclick="showToast('Opening eSanjeevani portal...')"><i class="ti ti-external-link"></i> Launch</button>
+      </div>
+      <div style="background:var(--info-light);border-radius:12px;padding:14px">
+        <div style="font-weight:700;color:var(--info)"><i class="ti ti-stethoscope"></i> Practo Care</div>
+        <div style="font-size:13px;color:var(--text-muted);margin:6px 0">24/7 doctor on call. Supports voice navigation. Subsidised for Ayushman card holders.</div>
+        <button class="vact-btn" style="font-size:13px;background:var(--info)" onclick="showToast('Opening Practo Care...')"><i class="ti ti-external-link"></i> Launch</button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="ti ti-heart-handshake"></i> NGO Partners — Karnataka</div>
+    <div id="ngoList"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="ti ti-truck"></i> Mobile Health Van Schedule</div>
+    <div id="vanSchedule"></div>
+  </div>
+</div>
+
+<!-- ===== SCHEMES PAGE ===== -->
+<div class="page" id="page-schemes">
+  <div class="card">
+    <div class="card-title"><i class="ti ti-flag"></i> National Government Schemes</div>
+    <div id="nationalSchemes"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="ti ti-map-pin"></i> Karnataka State Schemes</div>
+    <div id="stateSchemes"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="ti ti-world"></i> International / WHO Programs</div>
+    <div id="intlSchemes"></div>
+  </div>
+</div>
+
+<!-- ===== RISK PAGE ===== -->
+<div class="page" id="page-risk">
+  <div class="card">
+    <div class="card-title"><i class="ti ti-shield-check"></i> Accessibility Risk Assessment</div>
+    <div style="font-size:14px;color:var(--text-muted);margin-bottom:16px">Answer these quick questions to calculate your healthcare accessibility risk score.</div>
+    <div id="riskForm"></div>
+    <button class="vact-btn" style="margin-top:16px;width:100%;justify-content:center;font-size:16px;padding:14px" onclick="calcRisk()"><i class="ti ti-calculator"></i> Calculate My Risk Score</button>
+  </div>
+  <div class="card" id="riskResultCard" style="display:none">
+    <div class="card-title"><i class="ti ti-chart-bar"></i> Your Accessibility Risk Score</div>
+    <div id="riskResult"></div>
+  </div>
+  <div class="card">
+    <div class="card-title"><i class="ti ti-bulb"></i> Smart Recommendations</div>
+    <div id="smartRecs"></div>
+  </div>
+</div>
+
+</div><!-- end main -->
+
+<!-- Floating Read Aloud Button -->
+<button class="fab" onclick="readPageAloud()" title="Read page aloud"><i class="ti ti-volume"></i></button>
+
+<script>
+const translations = {
+  en: { home:'Home', voice:'Voice Assistant', dashboard:'Dashboard', services:'Services', schemes:'Schemes', risk:'Risk Score', welcomeText:'ನಮಸ್ಕಾರ! Welcome to Arogya Dwaar', welcomeSub:'Your gateway to accessible healthcare in Karnataka. Who are you?', quickTitle:'Quick Services', ebarTitle:'EMERGENCY ASSISTANCE', eCallAmb:'Call Ambulance 108', eCallCare:'Caregiver Alert', eShareLoc:'Share Location', offlineText:'Offline Mode Active — Essential services available without internet', qs1:'Voice Help', qs2:'Nearest Hospital', qs3:'Telemedicine', qs4:'Gov Schemes', qs5:'Risk Score', qs6:'Health Map', qs7:'Find NGO', qs8:'Read Aloud' },
+  kn: { home:'ಮುಖಪುಟ', voice:'ಧ್ವನಿ ಸಹಾಯಕ', dashboard:'ಡ್ಯಾಶ್‌ಬೋರ್ಡ್', services:'ಸೇವೆಗಳು', schemes:'ಯೋಜನೆಗಳು', risk:'ಅಪಾಯ ಸ್ಕೋರ್', welcomeText:'ನಮಸ್ಕಾರ! ಆರೋಗ್ಯ ದ್ವಾರಕ್ಕೆ ಸ್ವಾಗತ', welcomeSub:'ಕರ್ನಾಟಕದಲ್ಲಿ ಆರೋಗ್ಯ ಸೇವೆಗೆ ನಿಮ್ಮ ಪ್ರವೇಶದ್ವಾರ. ನೀವು ಯಾರು?', quickTitle:'ತ್ವರಿತ ಸೇವೆಗಳು', ebarTitle:'ತುರ್ತು ಸಹಾಯ', eCallAmb:'ಆ್ಯಂಬ್ಯುಲೆನ್ಸ್ 108', eCallCare:'ಆರೈಕೆದಾರ ಎಚ್ಚರಿಕೆ', eShareLoc:'ಸ್ಥಳ ಹಂಚಿಕೊಳ್ಳಿ', offlineText:'ಆಫ್‌ಲೈನ್ ಮೋಡ್ ಸಕ್ರಿಯ — ಇಂಟರ್ನೆಟ್ ಇಲ್ಲದೆ ಅಗತ್ಯ ಸೇವೆಗಳು ಲಭ್ಯ', qs1:'ಧ್ವನಿ ಸಹಾಯ', qs2:'ಹತ್ತಿರದ ಆಸ್ಪತ್ರೆ', qs3:'ಟೆಲಿಮೆಡಿಸಿನ್', qs4:'ಸರ್ಕಾರಿ ಯೋಜನೆ', qs5:'ಅಪಾಯ ಸ್ಕೋರ್', qs6:'ಆರೋಗ್ಯ ನಕ್ಷೆ', qs7:'ಎನ್‌ಜಿಒ ಹುಡುಕಿ', qs8:'ಓದಿ ಹೇಳಿ' },
+  hi: { home:'होम', voice:'वाॅइस असिस्टेंट', dashboard:'डैशबोर्ड', services:'सेवाएं', schemes:'योजनाएं', risk:'जोखिम स्कोर', welcomeText:'नमस्कार! आरोग्य द्वार में आपका स्वागत है', welcomeSub:'कर्नाटक में स्वास्थ्य सेवाओं का आपका प्रवेश द्वार।', quickTitle:'त्वरित सेवाएं', ebarTitle:'आपातकालीन सहायता', eCallAmb:'एम्बुलेंस 108', eCallCare:'देखभालकर्ता अलर्ट', eShareLoc:'स्थान शेयर करें', offlineText:'ऑफलाइन मोड सक्रिय — इंटरनेट के बिना आवश्यक सेवाएं उपलब्ध', qs1:'वॉइस मदद', qs2:'नजदीकी अस्पताल', qs3:'टेलीमेडिसिन', qs4:'सरकारी योजना', qs5:'जोखिम स्कोर', qs6:'स्वास्थ्य मानचित्र', qs7:'NGO खोजें', qs8:'ज़ोर से पढ़ें' }
+};
+
+let currentLang = 'en';
+let isListening = false;
+let voiceLang = 'en-IN';
+let recognition = null;
+let speechSynth = window.speechSynthesis;
+let isOffline = false;
+let isHighContrast = false;
+let isLargeText = false;
+
+const districts = [
+  {name:'Bengaluru Urban',gap:'low'},{name:'Bengaluru Rural',gap:'mid'},{name:'Mysuru',gap:'low'},{name:'Tumkur',gap:'mid'},{name:'Kolar',gap:'high'},{name:'Chikkaballapur',gap:'high'},
+  {name:'Ramnagara',gap:'mid'},{name:'Mandya',gap:'mid'},{name:'Hassan',gap:'high'},{name:'Chikkamagaluru',gap:'mid'},{name:'Davanagere',gap:'mid'},{name:'Shivamogga',gap:'mid'},
+  {name:'Udupi',gap:'low'},{name:'Dakshina Kannada',gap:'low'},{name:'Uttara Kannada',gap:'high'},{name:'Kodagu',gap:'mid'},{name:'Ballari',gap:'critical'},{name:'Koppal',gap:'critical'},
+  {name:'Raichur',gap:'critical'},{name:'Yadgir',gap:'critical'},{name:'Kalaburagi',gap:'critical'},{name:'Bidar',gap:'high'},{name:'Vijayapura',gap:'high'},{name:'Bagalkote',gap:'high'},
+  {name:'Dharwad',gap:'mid'},{name:'Gadag',gap:'high'},{name:'Haveri',gap:'high'},{name:'Belagavi',gap:'mid'},{name:'Chamrajanagar',gap:'critical'},{name:'Chitradurga',gap:'high'},{name:'Vijayanagara',gap:'high'}
+];
+
+const hospitals = [
+  {name:'Victoria Hospital', dist:'Bengaluru', type:'Govt', phone:'080-2670-1150', beds:1300, specialty:'Multi-specialty'},
+  {name:'District Hospital Mysuru', dist:'Mysuru', type:'Govt', phone:'0821-242-0111', beds:650, specialty:'General'},
+  {name:'KIMS Hospital Hubli', dist:'Dharwad', type:'Pvt-Subsidised', phone:'0836-237-5000', beds:800, specialty:'Multi-specialty'},
+  {name:'Raichur District Hospital', dist:'Raichur', type:'Govt', phone:'08532-220-450', beds:300, specialty:'General'},
+  {name:'Wenlock Hospital Mangaluru', dist:'DK', type:'Govt', phone:'0824-244-7354', beds:900, specialty:'Multi-specialty'},
+  {name:'CHC Yadgir', dist:'Yadgir', type:'Govt CHC', phone:'08473-252-123', beds:50, specialty:'Primary Care'}
+];
+
+const ngos = [
+  {name:'Parikrma Health Foundation', area:'Bengaluru', focus:'Disability & Rehab', phone:'080-2345-6789'},
+  {name:'Swasthya Karnataka', area:'North Karnataka', focus:'Rural Healthcare', phone:'0836-234-5678'},
+  {name:'MYRADA', area:'Kalaburagi', focus:'Rural Women & Children', phone:'08482-234-567'},
+  {name:'Samara Seva', area:'Chamrajanagar', focus:'Tribal Health', phone:'08226-234-890'},
+  {name:'Helpage India Karnataka', area:'Pan Karnataka', focus:'Elderly Care', phone:'1800-180-1253'},
+  {name:'NAB Karnataka', area:'Bengaluru', focus:'Visual Impairment', phone:'080-2226-5100'}
+];
+
+const nationalSchemes = [
+  {name:'Ayushman Bharat – PM-JAY', desc:'₹5 lakh annual health cover for 10+ crore poor families. Covers 1929 procedures.', link:'pmjay.gov.in', tags:['Elderly','Disabled','BPL']},
+  {name:'AB – Health & Wellness Centres', desc:'1.5 lakh HWCs providing comprehensive primary care including preventive services.', link:'nhm.gov.in', tags:['All Groups']},
+  {name:'Rashtriya Vayoshri Yojana', desc:'Free assistive devices for BPL elderly: hearing aids, walking sticks, wheelchairs, spectacles.', link:'socialwelfare.gov.in', tags:['Elderly']},
+  {name:'ADIP Scheme', desc:'Assistance to Disabled Persons for purchase/fitting of aids and appliances.', link:'disabilityaffairs.gov.in', tags:['Disabled']},
+  {name:'National Nutrition Mission', desc:'Improve nutritional outcomes for children, pregnant women and lactating mothers.', link:'wcd.nic.in', tags:['Women','Children']}
+];
+
+const stateSchemes = [
+  {name:'Arogya Karnataka', desc:'Karnataka universal health coverage extending PM-JAY to all residents. ₹5 lakh cover.', link:'arogyakarnataka.gov.in', tags:['All Groups']},
+  {name:'Vajpayee Arogyashri', desc:'Free surgery and medical care for BPL families at network hospitals.', link:'sast.karnataka.gov.in', tags:['BPL']},
+  {name:'Prasuti Araike Yojane', desc:'₹6,000 financial assistance to pregnant women from SC/ST/OBC/minority communities.', link:'karnataka.gov.in', tags:['Women']},
+  {name:'Mukhyamantri Santwana Harish', desc:'Emergency relief for patients with catastrophic health expenditure.', link:'karnataka.gov.in', tags:['Emergency']},
+  {name:'Jeevana Jyothi Disability Scheme', desc:'Monthly assistance and healthcare access for persons with disabilities in Karnataka.', link:'dwcd.karnataka.gov.in', tags:['Disabled']}
+];
+
+const intlSchemes = [
+  {name:'WHO – SAGE Care Programme', desc:'Support for older adults and caregivers in LMICs including India. Digital health tools.', link:'who.int/ageing', tags:['Elderly']},
+  {name:'UNICEF – Immunization Programme', desc:'Routine immunisation support across Karnataka in collaboration with NHM.', link:'unicef.org/india', tags:['Children']},
+  {name:'World Bank – HSSP', desc:'Health Systems Strengthening Project supporting Karnataka PHC upgrades and digital tools.', link:'worldbank.org', tags:['Systems']}
+];
+
+const aiResponses = {
+  'nearest hospital': 'Based on Karnataka data, your nearest government hospitals are:\n• Victoria Hospital, Bengaluru – 080-2670-1150\n• District Hospital, Mysuru – 0821-242-0111\n• Wenlock Hospital, Mangaluru – 0824-244-7354\n\nFor emergencies, please dial 108 immediately.',
+  'government schemes': 'You may be eligible for:\n✅ Ayushman Bharat PM-JAY (₹5 lakh cover)\n✅ Arogya Karnataka (state extension)\n✅ Vajpayee Arogyashri (free surgery)\n\nCheck eligibility at pmjay.gov.in or call 14555.',
+  'risk score': 'To calculate your accessibility risk score, please go to the Risk Score tab. It asks about mobility, digital access, language, and healthcare distance to assess your needs.',
+  'what is ayushman bharat': 'Ayushman Bharat – PM-JAY is India\'s largest health insurance scheme. It provides ₹5 lakh annual cover to over 10 crore poor families for hospitalisation at empanelled hospitals. In Karnataka, it\'s extended as "Arogya Karnataka" to all residents. Call 14555 for help.',
+  'diabetes prevention tips': 'Simple diabetes prevention tips:\n🥗 Eat more vegetables and whole grains\n🚶 Walk 30 minutes daily\n💧 Drink 8 glasses of water\n🍬 Reduce sugar and white rice\n🏥 Get blood sugar tested annually\n\nArogya Dwaar can book you a free test at the nearest PHC!',
+  'nearest phc bengaluru': 'Nearest PHCs in Bengaluru:\n• PHC Dasarahalli – 080-2839-1234\n• PHC Yelahanka – 080-2846-7890\n• PHC Kengeri – 080-2843-2345\n\nAll PHCs offer free OPD Mon–Sat, 8am–2pm.',
+  'assistive devices disability': 'Assistive devices available FREE under:\n• ADIP Scheme (Central) – hearing aids, wheelchairs, crutches\n• Rashtriya Vayoshri Yojana (Elderly) – walking aids, spectacles\n• NAB Karnataka – for visually impaired: white canes, braille kits\n\nContact NAB Karnataka: 080-2226-5100',
+  'mobile health van schedule': 'Mobile Health Van Schedule (Karnataka):\n• Bidar – Every Tuesday & Friday\n• Raichur – Monday, Wednesday\n• Chamrajanagar – Thursday\n• Yadgir – Tuesday, Saturday\n\nVans provide free consultations, medicines, and diagnostics.',
+  'caregiver support helpline': 'Caregiver Support Resources:\n📞 HelpAge India: 1800-180-1253 (Toll-free)\n📞 iCall: 9152987821\n📞 Karnataka Elderly Helpline: 14567\n\nArogya Dwaar also connects you to local caregiver NGOs.',
+  'mental health support': 'Mental Health Support in Karnataka:\n📞 iCall: 9152987821\n📞 NIMHANS Helpline: 080-4611-0007\n📞 Vandrevala Foundation: 1860-2662-345 (24/7)\n\nAll services are free and confidential.',
+  'immunization schedule child': 'Child Immunization Schedule (India):\n• Birth: BCG, OPV, Hepatitis B\n• 6 weeks: DPT, OPV, Hep B, Hib\n• 9 months: MR vaccine\n• 15–18 months: MMR booster\n\nAll FREE at government hospitals and Anganwadis. Track via eVIN app.',
+  'default': 'Thank you for your question. I\'m Dr. Aarogya, here to help you navigate healthcare in Karnataka. I can assist with:\n• Finding nearby hospitals & PHCs\n• Government health schemes\n• Emergency contacts\n• Preventive health tips\n• NGO support services\n\nPlease try asking something specific or use the quick buttons below!'
+};
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.getElementById('tab-' + page).classList.add('active');
+}
+
+function changeLang(lang) {
+  currentLang = lang;
+  const t = translations[lang] || translations['en'];
+  Object.keys(t).forEach(k => {
+    const el = document.getElementById(k + 'Text') || document.getElementById(k + 'Title') || document.getElementById(k + 'Sub') || document.querySelector('[data-key="' + k + '"]') || document.getElementById(k);
+    if (el) el.textContent = t[k];
+  });
+  document.querySelectorAll('[data-key]').forEach(el => { const key = el.getAttribute('data-key'); if (t[key]) el.textContent = t[key]; });
+  if (document.getElementById('ebarTitle')) document.getElementById('ebarTitle').textContent = t.ebarTitle || 'EMERGENCY ASSISTANCE';
+  showToast('Language changed to ' + lang.toUpperCase());
+}
+
+function toggleContrast() {
+  isHighContrast = !isHighContrast;
+  document.body.classList.toggle('high-contrast', isHighContrast);
+  document.getElementById('contrastBtn').classList.toggle('active', isHighContrast);
+  showToast(isHighContrast ? 'High Contrast ON' : 'High Contrast OFF');
+}
+
+function toggleTextSize() {
+  isLargeText = !isLargeText;
+  document.body.style.fontSize = isLargeText ? '19px' : '16px';
+  document.getElementById('textBtn').classList.toggle('active', isLargeText);
+  showToast(isLargeText ? 'Large Text ON' : 'Normal Text');
+}
+
+function toggleOffline() {
+  isOffline = !isOffline;
+  document.getElementById('offlineBanner').style.display = isOffline ? 'flex' : 'none';
+  document.getElementById('offlineBtn').classList.toggle('active', isOffline);
+  showToast(isOffline ? 'Offline Mode: Showing cached data' : 'Online Mode: Live data active');
+}
+
+function callEmergency(type) {
+  const msgs = { ambulance:'Dialling 108 Ambulance...', caregiver:'Sending alert to registered caregiver...', police:'Dialling Police 100...' };
+  showToast('🚨 ' + (msgs[type] || 'Emergency initiated!'));
+  if (speechSynth) {
+    const u = new SpeechSynthesisUtterance('Emergency assistance requested. ' + (msgs[type] || ''));
+    speechSynth.speak(u);
+  }
+}
+
+function shareLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(p => {
+      showToast('📍 Location shared: ' + p.coords.latitude.toFixed(4) + ', ' + p.coords.longitude.toFixed(4));
+    }, () => showToast('📍 Location: Bengaluru, Karnataka (default)'));
+  } else showToast('📍 Location shared with emergency services');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+function toggleVoice() {
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+    showToast('Voice recognition not supported in this browser');
+    simulateVoice();
+    return;
+  }
+  if (isListening) { stopListening(); return; }
+  startListening();
+}
+
+function startListening() {
+  isListening = true;
+  const btn = document.getElementById('voiceBtn');
+  const icon = document.getElementById('voiceIcon');
+  btn.classList.add('listening');
+  icon.className = 'ti ti-microphone-off';
+  document.getElementById('voiceStatus').textContent = '🔴 Listening... Speak now';
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SR();
+  recognition.lang = voiceLang;
+  recognition.continuous = false;
+  recognition.interimResults = false;
+  recognition.onresult = e => {
+    const transcript = e.results[0][0].transcript;
+    document.getElementById('voiceStatus').textContent = 'You said: "' + transcript + '"';
+    processVoiceInput(transcript);
+    stopListening();
+  };
+  recognition.onerror = () => { stopListening(); showToast('Could not hear clearly. Please try again.'); };
+  recognition.onend = () => stopListening();
+  recognition.start();
+}
+
+function stopListening() {
+  isListening = false;
+  if (recognition) { recognition.stop(); recognition = null; }
+  const btn = document.getElementById('voiceBtn');
+  const icon = document.getElementById('voiceIcon');
+  btn.classList.remove('listening');
+  icon.className = 'ti ti-microphone';
+  document.getElementById('voiceStatus').textContent = 'Tap the microphone to speak';
+}
+
+function simulateVoice() {
+  document.getElementById('voiceBtn').classList.add('listening');
+  document.getElementById('voiceStatus').textContent = '🔴 Demo mode: Simulating voice...';
+  setTimeout(() => {
+    document.getElementById('voiceBtn').classList.remove('listening');
+    processVoiceInput('nearest hospital');
+  }, 1800);
+}
+
+function processVoiceInput(text) {
+  const lower = text.toLowerCase();
+  let response = aiResponses['default'];
+  for (const key of Object.keys(aiResponses)) {
+    if (lower.includes(key)) { response = aiResponses[key]; break; }
+  }
+  document.getElementById('voiceResponse').textContent = response;
+  document.getElementById('voiceStatus').textContent = '✅ Response ready. Tap "Read Aloud" to hear it.';
+  addChat('You', text, 'user');
+  addChat('Dr. Aarogya', response, 'bot');
+}
+
+function quickAsk(q) {
+  processVoiceInput(q);
+  showPage('voice');
+}
+
+function readVoiceResponse() {
+  const text = document.getElementById('voiceResponse').textContent;
+  speak(text);
+}
+
+function readPageAloud() {
+  const active = document.querySelector('.page.active');
+  const text = active ? active.innerText.substring(0, 600) : 'Welcome to Arogya Dwaar healthcare portal.';
+  speak(text);
+}
+
+function speak(text) {
+  if (!speechSynth) { showToast('Text-to-speech not supported'); return; }
+  speechSynth.cancel();
+  const u = new SpeechSynthesisUtterance(text);
+  u.lang = voiceLang;
+  u.rate = 0.9;
+  u.pitch = 1;
+  speechSynth.speak(u);
+  showToast('🔊 Reading aloud...');
+}
+
+function setVoiceLang(code, name) {
+  const langMap = { en:'en-IN', kn:'kn-IN', hi:'hi-IN', ta:'ta-IN', te:'te-IN', ur:'ur-IN' };
+  voiceLang = langMap[code] || 'en-IN';
+  document.querySelectorAll('.vlang-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  showToast('Voice language: ' + name);
+}
+
+function sendChat() {
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+  input.value = '';
+  processVoiceInput(text);
+}
+
+function addChat(who, msg, type) {
+  const ch = document.getElementById('chatHistory');
+  const div = document.createElement('div');
+  div.style.cssText = 'margin-bottom:10px;';
+  const isBot = type === 'bot';
+  div.innerHTML = '<div style="font-size:12px;font-weight:700;color:' + (isBot ? 'var(--primary)' : 'var(--text-muted)') + ';margin-bottom:3px">' + who + '</div><div style="background:' + (isBot ? 'var(--primary-light)' : '#f5f5f5') + ';border-radius:10px;padding:10px 12px;font-size:14px;line-height:1.6;white-space:pre-line">' + msg + '</div>';
+  ch.appendChild(div);
+  ch.scrollTop = ch.scrollHeight;
+}
+
+function setGroup(g) {
+  const msgs = { elderly:'Elderly care services loaded. Showing geriatric programs, Rashtriya Vayoshri, and nearby senior centres.', disabled:'Disability services loaded. Showing ADIP scheme, assistive devices, and rehabilitation centres.', rural:'Rural health services loaded. Showing mobile vans, ASHA workers, and CHC locations.', caregiver:'Caregiver resources loaded. Showing support helplines, respite care, and caregiver training.', women:'Women & children services loaded. Showing maternal health, ICDS, and Anganwadi contacts.' };
+  showToast(msgs[g] || 'Profile set!');
+}
+
+function showGroup(g) { setGroup(g); showPage('services'); }
+
+function findNearest() {
+  showPage('services');
+  showToast('📍 Finding nearest hospitals in Karnataka...');
+}
+
+function findNGO() {
+  showPage('services');
+  setTimeout(() => document.querySelector('#ngoList').scrollIntoView({ behavior:'smooth' }), 300);
+}
+
+function buildHeatmap() {
+  const grid = document.getElementById('heatmapGrid');
+  if (!grid) return;
+  districts.forEach(d => {
+    const cell = document.createElement('div');
+    cell.className = 'hm-cell hm-' + d.gap;
+    cell.textContent = d.name.length > 10 ? d.name.substring(0,9) + '…' : d.name;
+    cell.title = d.name + ' — Gap: ' + d.gap;
+    cell.onclick = () => showToast(d.name + ': Accessibility gap — ' + d.gap.toUpperCase());
+    grid.appendChild(cell);
+  });
+}
+
+function buildBarChart() {
+  const bc = document.getElementById('barChart');
+  if (!bc) return;
+  const bars = [
+    {label:'Transportation', pct:72, color:'#e74c3c'},
+    {label:'Digital Literacy', pct:61, color:'#e67e22'},
+    {label:'Language Barriers', pct:48, color:'#f39c12'},
+    {label:'Financial Limits', pct:55, color:'#c0392b'},
+    {label:'Caregiver Access', pct:43, color:'#8e44ad'},
+    {label:'Assistive Tech', pct:39, color:'#2980b9'},
+    {label:'Interface Design', pct:31, color:'#27ae60'}
+  ];
+  bars.forEach(b => {
+    bc.innerHTML += '<div class="bar-row"><div class="bar-label">' + b.label + '</div><div class="bar-track"><div class="bar-fill" style="width:' + b.pct + '%;background:' + b.color + '">' + b.pct + '%</div></div></div>';
+  });
+}
+
+function buildPieChart() {
+  const pc = document.getElementById('pieChart');
+  if (!pc) return;
+  const groups = [
+    {name:'Elderly (65+)', pct:14, color:'#e74c3c'},
+    {name:'Disability', pct:22, color:'#3498db'},
+    {name:'Rural Women', pct:31, color:'#9b59b6'},
+    {name:'Tribal', pct:38, color:'#e67e22'},
+    {name:'Urban Poor', pct:19, color:'#27ae60'}
+  ];
+  pc.innerHTML = groups.map(g => '<div class="bar-row"><div class="bar-label" style="color:var(--text)">' + g.name + '</div><div class="bar-track"><div class="bar-fill" style="width:' + g.pct + '%;background:' + g.color + '">' + g.pct + '% excluded</div></div></div>').join('');
+}
+
+function buildRiskZones() {
+  const rz = document.getElementById('riskZones');
+  if (!rz) return;
+  const zones = [
+    {d:'Kalaburagi', score:87, level:'Critical'},
+    {d:'Yadgir', score:85, level:'Critical'},
+    {d:'Chamrajanagar', score:82, level:'Critical'},
+    {d:'Raichur', score:79, level:'High'},
+    {d:'Koppal', score:74, level:'High'},
+    {d:'Chitradurga', score:62, level:'Moderate'}
+  ];
+  rz.innerHTML = zones.map(z => '<div style="display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid var(--border)"><div style="width:140px;font-weight:600;font-size:14px">' + z.d + '</div><div class="prog" style="flex:1"><div class="prog-fill" style="width:' + z.score + '%;background:' + (z.score > 80 ? '#e74c3c' : z.score > 65 ? '#e67e22' : '#f1c40f') + '"></div></div><span class="alert-tag ' + (z.score > 80 ? 'at-high' : z.score > 65 ? 'at-med' : 'at-low') + '">' + z.level + '</span></div>').join('');
+}
+
+function buildTrend() {
+  const tc = document.getElementById('trendChart');
+  if (!tc) return;
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const vals = [42,45,41,48,52,55,50,54,58,56,61,65];
+  const max = Math.max(...vals);
+  tc.innerHTML = '<div style="display:flex;align-items:flex-end;gap:6px;height:100px">' +
+    vals.map((v,i) => '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px"><div style="width:100%;background:var(--primary);border-radius:4px 4px 0 0;height:' + Math.round(v/max*90) + 'px;cursor:pointer;transition:opacity 0.2s" title="' + months[i] + ': ' + v + '%"></div><div style="font-size:10px;color:var(--text-muted)">' + months[i].substring(0,1) + '</div></div>').join('') + '</div><div style="font-size:12px;color:var(--text-muted);margin-top:6px">Healthcare participation rate (%) Jan–Dec 2024</div>';
+}
+
+function buildHospitals() {
+  const hl = document.getElementById('hospitalList');
+  if (!hl) return;
+  hl.innerHTML = hospitals.map(h => '<div class="contact-card"><div class="contact-icon" style="background:var(--primary-light);color:var(--primary)"><i class="ti ti-building-hospital"></i></div><div class="contact-info"><div class="contact-name">' + h.name + '</div><div class="contact-sub"><span class="tag" style="background:var(--primary-light);color:var(--primary)">' + h.type + '</span>' + h.dist + ' · ' + h.beds + ' beds · ' + h.specialty + '</div></div><button class="contact-call" onclick="showToast(\'Calling ' + h.name + '...\')"><i class="ti ti-phone"></i> ' + h.phone + '</button></div>').join('');
+}
+
+function buildNGOs() {
+  const nl = document.getElementById('ngoList');
+  if (!nl) return;
+  nl.innerHTML = ngos.map(n => '<div class="contact-card"><div class="contact-icon" style="background:#e8f0ff;color:#1a5fb4"><i class="ti ti-heart-handshake"></i></div><div class="contact-info"><div class="contact-name">' + n.name + '</div><div class="contact-sub">' + n.area + ' · ' + n.focus + '</div></div><button class="contact-call" onclick="showToast(\'Connecting to ' + n.name + '...\')"><i class="ti ti-phone"></i> Call</button></div>').join('');
+}
+
+function buildVanSchedule() {
+  const vs = document.getElementById('vanSchedule');
+  if (!vs) return;
+  const sched = [
+    {d:'Bidar', days:'Tue, Fri', time:'9am–1pm', services:'OPD, BP, Diabetes'},
+    {d:'Raichur', days:'Mon, Wed', time:'8am–12pm', services:'OPD, Antenatal'},
+    {d:'Yadgir', days:'Tue, Sat', time:'9am–2pm', services:'OPD, Immunisation'},
+    {d:'Chamrajanagar', days:'Thu', time:'10am–3pm', services:'Tribal Health, OPD'},
+    {d:'Koppal', days:'Wed, Fri', time:'8am–1pm', services:'OPD, BP, Eye check'}
+  ];
+  vs.innerHTML = sched.map(s => '<div style="display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);flex-wrap:wrap"><div style="min-width:120px;font-weight:700">' + s.d + '</div><div style="flex:1"><span class="tag" style="background:var(--accent-light);color:#7a5000">' + s.days + '</span> <span style="font-size:13px;color:var(--text-muted)">' + s.time + '</span><br><span style="font-size:13px">' + s.services + '</span></div><button class="contact-call" style="font-size:12px" onclick="showToast(\'Van schedule for ' + s.d + ' noted!\')">Remind Me</button></div>').join('');
+}
+
+function buildSchemes(id, data) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = data.map(s => '<div class="scheme-card"><div class="scheme-name">' + s.name + '</div><div style="margin:4px 0">' + (s.tags || []).map(t => '<span class="tag" style="background:rgba(26,107,58,0.1);color:var(--primary)">' + t + '</span>').join('') + '</div><div class="scheme-desc">' + s.desc + '</div><span class="scheme-link" onclick="showToast(\'Opening ' + s.link + '...\')"><i class="ti ti-external-link"></i> ' + s.link + '</span></div>').join('');
+}
+
+function buildRiskForm() {
+  const rf = document.getElementById('riskForm');
+  if (!rf) return;
+  const qs = [
+    {id:'q1',label:'How far is the nearest hospital?',opts:['< 5 km','5–15 km','15–30 km','> 30 km'],scores:[0,1,2,3]},
+    {id:'q2',label:'Do you have a smartphone / internet?',opts:['Yes, reliable','Yes, sometimes','No smartphone','No internet'],scores:[0,1,2,3]},
+    {id:'q3',label:'What is your primary language?',opts:['Kannada/Hindi/English','Regional only','No common language','Sign language user'],scores:[0,1,2,3]},
+    {id:'q4',label:'Mobility status?',opts:['Fully mobile','Some difficulty','Wheelchair user','Bed-bound'],scores:[0,1,2,3]},
+    {id:'q5',label:'Monthly household income?',opts:['> ₹15,000','₹5,000–15,000','₹2,000–5,000','< ₹2,000'],scores:[0,1,2,3]},
+    {id:'q6',label:'Do you have a caregiver available?',opts:['Yes, always','Occasionally','Rarely','No caregiver'],scores:[0,1,2,3]}
+  ];
+  rf.innerHTML = qs.map(q => '<div style="margin-bottom:16px"><div style="font-weight:600;font-size:15px;margin-bottom:8px">' + q.label + '</div><div style="display:flex;flex-wrap:wrap;gap:8px">' + q.opts.map((o,i) => '<label style="display:flex;align-items:center;gap:6px;cursor:pointer;font-size:14px;background:var(--bg);border:1.5px solid var(--border);border-radius:10px;padding:8px 12px"><input type="radio" name="' + q.id + '" value="' + q.scores[i] + '" style="accent-color:var(--primary)"> ' + o + '</label>').join('') + '</div></div>').join('');
+}
+
+function calcRisk() {
+  let total = 0, answered = 0;
+  ['q1','q2','q3','q4','q5','q6'].forEach(q => {
+    const el = document.querySelector('input[name="' + q + '"]:checked');
+    if (el) { total += parseInt(el.value); answered++; }
+  });
+  if (answered < 3) { showToast('Please answer at least 3 questions'); return; }
+  const maxScore = 18;
+  const pct = Math.round((total / maxScore) * 100);
+  const level = pct < 30 ? {label:'Low Risk', color:'#27ae60', icon:'ti-shield-check'} : pct < 55 ? {label:'Moderate Risk', color:'#e67e22', icon:'ti-shield-half'} : pct < 75 ? {label:'High Risk', color:'#e74c3c', icon:'ti-shield-x'} : {label:'Critical Risk', color:'#c0392b', icon:'ti-alert-circle'};
+  document.getElementById('riskResultCard').style.display = 'block';
+  document.getElementById('riskResult').innerHTML = '<div style="text-align:center;padding:20px 0"><div style="font-size:52px;font-weight:900;color:' + level.color + '">' + pct + '</div><div style="font-size:13px;color:var(--text-muted)">out of 100</div><div style="font-size:20px;font-weight:700;color:' + level.color + ';margin:8px 0"><i class="ti ' + level.icon + '"></i> ' + level.label + '</div><div class="prog" style="max-width:300px;margin:10px auto;height:14px"><div class="prog-fill" style="width:' + pct + '%;background:' + level.color + '"></div></div></div>';
+  buildSmartRecs(pct, total);
+  document.getElementById('riskResultCard').scrollIntoView({behavior:'smooth'});
+  speak('Your accessibility risk score is ' + pct + ' out of 100, which indicates ' + level.label);
+}
+
+function buildSmartRecs(pct, total) {
+  const sr = document.getElementById('smartRecs');
+  if (!sr) return;
+  const recs = [];
+  if (pct > 40) recs.push({type:'warn',badge:'Transport',text:'Consider registering for NAMMA (Karnataka transport scheme) or contact HelpAge India (1800-180-1253) for assisted transport to healthcare.'});
+  if (pct > 30) recs.push({type:'',badge:'Schemes',text:'You likely qualify for Ayushman Bharat PM-JAY and Arogya Karnataka. Check eligibility at pmjay.gov.in or call 14555.'});
+  recs.push({type:'',badge:'Nearest Care',text:'Your nearest PHC or HWC can provide free OPD, BP checks, and medicines. Arogya Dwaar can help you locate the exact address.'});
+  if (pct > 50) recs.push({type:'warn',badge:'NGO Support',text:'Based on your score, connecting you to an NGO partner. HelpAge India and Swasthya Karnataka serve your area.'});
+  recs.push({type:'',badge:'Digital Health',text:'Use eSanjeevani for free teleconsultation — available in Kannada. Call 104 for health helpline in your language.'});
+  sr.innerHTML = recs.map(r => '<div class="rec-card ' + r.type + '"><span class="rec-badge">' + r.badge + '</span><div class="rec-text">' + r.text + '</div></div>').join('');
+}
+
+window.addEventListener('load', () => {
+  buildHeatmap();
+  buildBarChart();
+  buildPieChart();
+  buildRiskZones();
+  buildTrend();
+  buildHospitals();
+  buildNGOs();
+  buildVanSchedule();
+  buildSchemes('nationalSchemes', nationalSchemes);
+  buildSchemes('stateSchemes', stateSchemes);
+  buildSchemes('intlSchemes', intlSchemes);
+  buildRiskForm();
+  buildSmartRecs(0, 0);
+});
+</script>
+</body>
+</html>
